@@ -1,17 +1,19 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { Heart } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const Home = () => {
-  const canvasRef = useRef(null)
-  const overlayRef = useRef(null)
-  const titleRef = useRef(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
   const [imagesLoaded, setImagesLoaded] = useState(false)
-  const imagesRef = useRef([])
+  const imagesRef = useRef<HTMLImageElement[]>([])
   const [imageCount, setImageCount] = useState(0)
 
   const fetchImageList = useCallback(async () => {
@@ -28,18 +30,12 @@ const Home = () => {
 
   const preloadImages = useCallback(async () => {
     const imageList = await fetchImageList()
-    let loadedCount = 0
-
-    const loadImage = (src: string, index: number) => {
+    const loadPromises = imageList.map((src: string, index: number) => {
       return new Promise<void>((resolve, reject) => {
         const image = new Image()
         image.src = src
         image.onload = () => {
           imagesRef.current[index] = image
-          loadedCount++
-          if (loadedCount === imageList.length) {
-            setImagesLoaded(true)
-          }
           resolve()
         }
         image.onerror = () => {
@@ -47,9 +43,10 @@ const Home = () => {
           reject()
         }
       })
-    }
+    })
 
-    await Promise.all(imageList.map((src, index) => loadImage(src, index)))
+    await Promise.all(loadPromises)
+    setImagesLoaded(true)
   }, [fetchImageList])
 
   useEffect(() => {
@@ -63,12 +60,12 @@ const Home = () => {
     const context = canvas?.getContext('2d')
     if (!canvas || !context) return
 
-    canvas.width = imagesRef.current[0].width
-    canvas.height = imagesRef.current[0].height
+    const firstImage = imagesRef.current[0]
+    canvas.width = firstImage.width
+    canvas.height = firstImage.height
 
-    context.drawImage(imagesRef.current[0], 0, 0)
+    context.drawImage(firstImage, 0, 0)
 
-    // Анимация появления заголовка
     gsap.from(titleRef.current, {
       opacity: 0,
       y: 50,
@@ -77,7 +74,6 @@ const Home = () => {
       delay: 0.5,
     })
 
-    // Анимация исчезновения оверлея
     gsap.to(overlayRef.current, {
       opacity: 0,
       duration: 1.5,
@@ -90,33 +86,27 @@ const Home = () => {
       },
     })
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: '.scroll-container',
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: true,
+    const updateImage = (progress: number) => {
+      const frameIndex = Math.min(
+        Math.floor(progress * (imageCount - 1)),
+        imageCount - 1,
+      )
+      context.clearRect(0, 0, canvas.width, canvas.height)
+      context.drawImage(imagesRef.current[frameIndex], 0, 0)
+    }
+
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: '.scroll-container',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: true,
+      onUpdate: self => {
+        updateImage(self.progress)
       },
     })
 
-    tl.to(
-      {},
-      {
-        onUpdate: () => {
-          const progress = ScrollTrigger.getAll()[0].progress
-          const frameIndex = Math.min(
-            Math.floor(progress * imageCount),
-            imageCount - 1,
-          )
-          context.clearRect(0, 0, canvas.width, canvas.height)
-          context.drawImage(imagesRef.current[frameIndex], 0, 0)
-        },
-      },
-    )
-
     return () => {
-      tl.kill()
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+      scrollTrigger.kill()
     }
   }, [imagesLoaded, imageCount])
 
@@ -137,16 +127,23 @@ const Home = () => {
                 ref={titleRef}
                 className="text-4xl font-thin uppercase tracking-widest text-white"
               >
-                Explore the Journey
+                Scrolling Web Image
               </h1>
             </div>
           </div>
         </div>
       </div>
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 transform">
-        <div className="text-sm font-light tracking-wider text-white opacity-75">
-          Scroll to navigate
-        </div>
+        <p className="text-sm font-light tracking-wider text-white opacity-75">
+          Made with <Heart className="inline-block" /> by{' '}
+          <Link
+            href="https://github.com/ixedasan"
+            target="_blank"
+            className="text-lg"
+          >
+            ixedasan
+          </Link>
+        </p>
       </div>
     </div>
   )

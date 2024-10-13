@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frame Sequence Animation Project
 
-## Getting Started
+This project showcases an interactive frame sequence animation controlled by user scrolling. It combines modern web technologies to create an immersive visual experience, demonstrating the power of scroll-based animations and interactive web design.
 
-First, run the development server:
+## Features
+
+- Scroll-controlled frame sequence animation
+- Smooth transitions between frames using GSAP and ScrollTrigger
+- Play/Pause functionality for animation control
+- Responsive design for various screen sizes
+
+# Technologies Used
+
+- React.js
+- Next.js
+- GSAP (GreenSock Animation Platform)
+- Tailwind CSS
+
+## Installation
+
+To clone and run this application, you'll need [Git](https://git-scm.com/) and [PNPM](https://pnpm.io/) installed on your computer. From your command line:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone this repository
+$ git clone https://github.com/ixedasan/frame-sequence-animation.git
+
+# Navigate to the project directory
+$ cd frame-sequence-animation
+
+# Install dependencies
+$ pnpm install
+
+# Start the development server
+$ pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Customization
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Replace the images in the `public/frames/` directory with your own sequence
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Contributing
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contributions are welcome! Please feel free to submit a Pull Request.
